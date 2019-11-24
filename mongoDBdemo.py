@@ -17,10 +17,14 @@ class MongoHelper():
     #define the collection. This is where your information will go
     db_collection = default_database.mongoDemo
 
-    #create a method to insert elements to the collection
+    #create methods to insert elements to the collection
     #this method inserts one entry at a time
-    def insertEntry(self, entry):
+    def insertOneEntry(self, entry):
         self.db_collection.insert_one(entry)
+    
+    #this method inserts multiple entries at a time
+    def insertManyEntries(self, entryList):
+        self.db_collection.insert_many(entryList)
 
 
 if __name__ == "__main__":
@@ -34,7 +38,7 @@ if __name__ == "__main__":
     print("Enter one of the options listed below.\n")
 
     #Have a list to hold json documents
-    #entries[]
+    entries = []
 
     while choice != 'q':
         #declare a dictionary object to be our Json file
@@ -54,11 +58,21 @@ if __name__ == "__main__":
             #tester
             print(json_doc)
             #TODO: add json to list
+            entries.append(json_doc)
+
         elif choice == 'q':
             print("Entries are being submitted.")
             #TODO: perform mongo operations
             # if json list is holding one element, use insert one
             # otherwise, insert_many
+            '''#tester
+            print("Entries length = ", len(entries))'''
+
+            if(len(entries) == 1): #if there is one entry only, use the insert_one method
+                mongo_helper.insertOneEntry(entries[0])
+            else: #there is more than one entry, use the insert_many method
+                mongo_helper.insertManyEntries(entries)
+
         
         else:
             print("The entered option is not valid")
