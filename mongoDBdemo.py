@@ -9,6 +9,7 @@ from datetime import datetime #this is optional; used to give automatic timing f
 
 class MongoHelper():
     #define a mongo client with the mongoDB uri
+    #This code retrieves the URI from "mongoSecrets.py", which is not displayed on the public repo
     mongo_client = pymongo.MongoClient(mongoSecrets.mlab_uri)
     
     #define the default database
