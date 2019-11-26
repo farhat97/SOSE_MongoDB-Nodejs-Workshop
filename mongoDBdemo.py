@@ -103,6 +103,10 @@ if __name__ == "__main__":
             json_doc['hours'] = input("Enter hours: ")
             json_doc['submissionTime'] = datetime.now()
             
+            #the 'tester' key can be used to demonstrate that some documents could have more than the 
+            #3 values we are expecting, which are name, hours and submission time
+            #json_doc['tester'] = input("testAttribute: ")
+            
             #tester
             print(json_doc)
 
