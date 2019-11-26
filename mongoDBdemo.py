@@ -2,6 +2,7 @@
 import json
 import pymongo
 import requests
+from bson.objectid import ObjectId 
 #Import secrets
 import mongoSecrets
 from objdict import ObjDict
@@ -53,6 +54,22 @@ class MongoHelper():
         #print the results
         for entries in cursor:
             print(entries, "\n")
+    
+    #update an entries hours by passing its ID
+    def updateOneEntry(self, id, updatedHours):
+        #use ObjectId so mongo knows the "_id" tag is the actual id
+        #use the $set keyword to change something in the document
+        self.db_collection.update_one(
+            {"_id" : ObjectId(id)},
+            {"$set" : {"hours" : updatedHours}}
+        )
+    
+    #delete an entry based on its ID
+    def deleteOneEntry(self, id):
+        #use ObjectId so mongo knows the "_id" tag is the actual id
+        self.db_collection.delete_one(
+            {"_id" : ObjectId(id)}
+        )
 
 if __name__ == "__main__":
     #Declare a mongo helper
@@ -75,6 +92,8 @@ if __name__ == "__main__":
         print("[F]Enter f finish entering hours")
         print("[2]Enter 2 to retrieve all entries")
         print("[3]Enter 3 to retrieve entries with a specific name and hours")
+        print("[4]Enter 4 to update an existing entry")
+        print("[5]Enter 5 to delete an entry")
         print("[q]Enter q to quit the program\n")
         
         choice = input("What would you like to do? \n")
@@ -97,12 +116,10 @@ if __name__ == "__main__":
             print("Entries are being submitted.")
             # if json list is holding one element, use insert one
             # otherwise, insert_many
-            '''#tester
-            print("Entries length = ", len(entries))'''
 
-            if(len(entries) == 1): #if there is one entry only, use the insert_one method
+            if(len(entries) == 1):
                 mongo_helper.insertOneEntry(entries[0])
-            else: #there is more than one entry, use the insert_many method
+            else:
                 mongo_helper.insertManyEntries(entries)
 
         elif choice == '2':
@@ -113,6 +130,17 @@ if __name__ == "__main__":
             name = input("What name are you looking for? ")
             hours = input("How many hours? ")
             mongo_helper.retrieveEntryWithFilter(name, hours)
+
+        elif choice == '4':
+            mongo_id = input("What is the entry's ID? ")
+            updatedHours = input("What are the updated hours? ")
+
+            mongo_helper.updateOneEntry(mongo_id, updatedHours)
+        
+        elif choice == '5':
+            mongo_id = input("What is the entry's ID? ")
+
+            mongo_helper.deleteOneEntry(mongo_id)
             
         elif choice == 'q':
             print("Bye")
