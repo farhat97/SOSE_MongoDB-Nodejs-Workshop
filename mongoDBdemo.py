@@ -72,7 +72,7 @@ class MongoHelper():
         )
 
 if __name__ == "__main__":
-    #Declare a mongo helper
+    #Define a mongo helper
     mongo_helper = MongoHelper()
     
     print("\n--- Record hours ---\n")
@@ -152,15 +152,3 @@ if __name__ == "__main__":
         else:
             print("The entered option is not valid")
 
-    
-    
-    
-    '''json_doc = ObjDict()
-    
-    json_doc['name'] = input("enter name: \n")
-    json_doc['hours'] = input("enter hours: \n")
-    json_doc['subTime'] = datetime.now()
-
-
-    print("\n Json file: \n")
-    print(json_doc)'''
