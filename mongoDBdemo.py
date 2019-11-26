@@ -9,7 +9,8 @@ from datetime import datetime #this is optional; used to give automatic timing f
 
 class MongoHelper():
     #define a mongo client with the mongoDB uri
-    #This code retrieves the URI from "mongoSecrets.py", which is not displayed on the public repo
+    #this code retrieves the URI from "mongoSecrets.py", which is not displayed on the public repo.
+    #therefore, replace "mongoSecrets.mlab_uri" with your mongo uri
     mongo_client = pymongo.MongoClient(mongoSecrets.mlab_uri)
     
     #define the default database
@@ -27,6 +28,31 @@ class MongoHelper():
     def insertManyEntries(self, entryList):
         self.db_collection.insert_many(entryList)
 
+    #create methods to retrieve elements from the collection
+    #this method retrieves and prints all documents in the collection
+    def retrieveAllEntries(self):
+        '''Summary
+            Pymongo creates a cursor to iterate through the collection.
+            Iteration can be performed with the find() method.
+            By leaving find's filters empty (hence, collection.find({})), this will iterate through the 
+            entire collection
+        '''
+        cursor = self.db_collection.find({})
+
+        #print the results
+        for entries in cursor:
+            print(entries, "\n")
+    
+    #this method retrieves and prints a document with a matching name and hours
+    def retrieveEntryWithFilter(self, name, hours):
+        cursor = self.db_collection.find({"name" : name, "hours" : hours})
+
+        if cursor is None: #TODO
+            print("There are no entries with that name.")
+
+        #print the results
+        for entries in cursor:
+            print(entries, "\n")
 
 if __name__ == "__main__":
     #Declare a mongo helper
@@ -36,7 +62,6 @@ if __name__ == "__main__":
 
     #create a menu to insert entries in the database (or more specifically, the collection)
     choice = ""
-    print("Enter one of the options listed below.\n")
 
     #Have a list to hold json documents
     entries = []
@@ -45,11 +70,14 @@ if __name__ == "__main__":
         #declare a dictionary object to be our Json file
         json_doc = ObjDict()
 
-
-        print("\n[1]Enter 1 to enter hours")
-        print("[q]Enter q finish")
+        print("Enter one of the options listed below.\n")
+        print("[1]Enter 1 to enter hours")
+        print("[F]Enter f finish entering hours")
+        print("[2]Enter 2 to retrieve all entries")
+        print("[3]Enter 3 to retrieve entries with a specific name and hours")
+        print("[q]Enter q to quit the program\n")
         
-        choice = input("What would you like to do? ")
+        choice = input("What would you like to do? \n")
 
         if choice == '1':
             json_doc['name'] = input("Enter name: ")
@@ -58,12 +86,15 @@ if __name__ == "__main__":
             
             #tester
             print(json_doc)
-            #TODO: add json to list
+
+            #add entry to the list of entries
             entries.append(json_doc)
 
-        elif choice == 'q':
+            print("\nAdd more entries or enter F to submit times")
+
+
+        elif choice == 'f':
             print("Entries are being submitted.")
-            #TODO: perform mongo operations
             # if json list is holding one element, use insert one
             # otherwise, insert_many
             '''#tester
@@ -74,7 +105,18 @@ if __name__ == "__main__":
             else: #there is more than one entry, use the insert_many method
                 mongo_helper.insertManyEntries(entries)
 
+        elif choice == '2':
+            mongo_helper.retrieveAllEntries()
+
         
+        elif choice == '3':
+            name = input("What name are you looking for? ")
+            hours = input("How many hours? ")
+            mongo_helper.retrieveEntryWithFilter(name, hours)
+            
+        elif choice == 'q':
+            print("Bye")
+
         else:
             print("The entered option is not valid")
 
